@@ -12,7 +12,7 @@
 @attribute oldpeak numeric 
 @attribute slope_ST numeric
 @attribute vessels_flourosopy {0,1,2,3}
-@attribute thal numeric
+@attribute thal {3,6,7}
 @attribute class {1,2}
 
 @data
