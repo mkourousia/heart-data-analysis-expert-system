@@ -1,3 +1,12 @@
+thal
+vessels_flourosopy
+chest_pain_type
+max_heart_rate
+exercise_angina
+blood_pressure
+age
+sex
+
 1. όταν thal=6 τοτε 2
 
 2. όταν thal=7 και vessels_flourosopy=3 τοτε 2
