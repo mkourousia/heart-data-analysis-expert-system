@@ -27,7 +27,7 @@
 (defrule r2
    (Patient (thal ?th))
    (Patient (vessels_flourosopy ?vf))
-   (test (= thal 6) (>= vessels_flourosopy 1))
+   (test (and (= ?th 6) (>= ?vf 1)))
    =>
    (assert (Diagnosis (diagnosis yes)))
    (printout t "Heart desease diagnosed" crlf))
