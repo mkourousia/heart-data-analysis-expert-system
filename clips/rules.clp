@@ -63,239 +63,130 @@ do
 (close inputfile)
 )
 
-; thal=6 then 2 (rule 1)
+
+; thal!=7 and vessels_flourosopy = 3 then 2
 (defrule r1
    (declare (salience 80))
    (Patient (thal ?th))
-   (test (= ?th 6))
+   (Patient (vessels_flourosopy ?vf))
+   (test (and (!= ?th 7) (= ?vf 3)))
    =>
    (assert (Diagnosis (diagnosis 2)))
    (printout t "Heart desease diagnosed" crlf))
 
 
-; thal=7 and vessels_flourosopy>=1 then 2 (rules 2,3,4)
-(defrule r2_3_4
+; thal!=7 και vessels_flourosopy !=3 !=0 and sex!=0 and chest_pain !=4 then 1
+(defrule r2
    (declare (salience 80))
    (Patient (thal ?th))
    (Patient (vessels_flourosopy ?vf))
-   (test (and (= ?th 6) (>= ?vf 1)))
+   (Patient (chest_pain_type ?chp))
+   (Patient (sex ?sex))
+   (and (test (!= ?th 7))
+        (test (and (!= ?vf 0) (!= ?vf 3) ))
+   (and (test (!= ?chp 4))
+        (test (= sex 1)))
+   =>
+   (assert (Diagnosis (diagnosis 1)))
+   (printout t "No heart desease diagnosed" crlf))
+
+
+; thal!=7 και vessels_flourosopy !=3 !=0 and sex!=0 and chest_pain !=4 then 2
+(defrule r3
+   (declare (salience 80))
+   (Patient (thal ?th))
+   (Patient (vessels_flourosopy ?vf))
+   (Patient (chest_pain_type ?chp))
+   (Patient (sex ?sex))
+   (and (test (!= ?th 7))
+        (test (and (!= ?vf 0) (!= ?vf 3) ))
+   (and (test (= ?chp 4))
+        (test (= sex 1)))
    =>
    (assert (Diagnosis (diagnosis 2)))
    (printout t "Heart desease diagnosed" crlf))
 
 
-; thal=7 and vessels_flourosopy=0 and chest_pain_type=4 and oldpeak>0.6 then 2 (rule 5)
+; thal!=7 και vessels_flourosopy !=3 !=0 and sex!=0 and chest_pain !=4 then 1
+(defrule r4
+   (declare (salience 80))
+   (Patient (thal ?th))
+   (Patient (vessels_flourosopy ?vf))
+   (Patient (chest_pain_type ?chp))
+   (Patient (sex ?sex))
+   (and (test (!= ?th 7))
+        (test (and (!= ?vf 0)))
+   (and (test (!= ?vf 3))
+        (test (= sex 0)))
+   =>
+   (assert (Diagnosis (diagnosis 1)))
+   (printout t "No heart desease diagnosed" crlf))
+
+
+; thal!=7 and vessels_flourosopy = 3 then 2
 (defrule r5
    (declare (salience 80))
    (Patient (thal ?th))
    (Patient (vessels_flourosopy ?vf))
-   (Patient (chest_pain_type ?chp))
-   (Patient (oldpeak ?oldp))
-   (and (test (= ?th 7))
-        (test (= ?vf 0)))
-   (and (test (= ?chp 4))
-        (test (> ?oldp 0.6)))
+   (test (and (= ?th 7) (= ?vf 3) )
    =>
    (assert (Diagnosis (diagnosis 2)))
    (printout t "Heart desease diagnosed" crlf))
 
 
-; thal=7 and vessels_flourosopy=0 and chest_pain_type=4 and oldpeak<=0.6 and max_heart_rate>163 then 2 (rule 6)
+; thal=7 and vessels_flourosopy != 0 then 2
 (defrule r6
    (declare (salience 80))
    (Patient (thal ?th))
    (Patient (vessels_flourosopy ?vf))
-   (Patient (chest_pain_type ?chp))
-   (Patient (oldpeak ?oldp))
-   (Patient (max_heart_rate ?mhr))
-   (and (test (= ?th 7))
-        (test (= ?vf 0)))
-   (and (test (= ?chp 4))
-        (test (<= ?oldp 0.6)))
-   (test (> ?mhr 163))
+   (test (and (= ?th 7) (!= ?vf 0)))
    =>
    (assert (Diagnosis (diagnosis 2)))
    (printout t "Heart desease diagnosed" crlf))
 
 
-; thal=7 and vessels_flourosopy=0 and chest_pain_type=4 and oldpeak<=0.6 and max_heart_rate<=163 then 1 (rule 7)
+; thal=7 and vessels_flourosopy = 0 and slope_ST > 1.0 and exercise_angina !=0 then 2
 (defrule r7
    (declare (salience 80))
    (Patient (thal ?th))
    (Patient (vessels_flourosopy ?vf))
-   (Patient (chest_pain_type ?chp))
-   (Patient (oldpeak ?oldp))
-   (Patient (max_heart_rate ?mhr))
+   (Patient (slope_ST ?slope))
+   (Patient (exercise_angina ?exang))
    (and (test (= ?th 7))
         (test (= ?vf 0)))
-   (and (test (= ?chp 4))
-        (test (<= ?oldp 0.6)))
-   (test (<= ?mhr 163))
+   (and (test (> ?slope_ST 1.0))
+        (test (!= ?exang 0)))
    =>
-   (assert (Diagnosis (diagnosis 1)))
-   (printout t "No heart desease diagnosed" crlf))
+   (assert (Diagnosis (diagnosis 2)))
+   (printout t "Heart desease diagnosed" crlf))
 
 
-; thal=7 and vessels_flourosopy=0 and chest_pain_type>=1 then 1 (rules 8,9,10)
-(defrule r8_9_10
+; thal=7 and vessels_flourosopy = 0 and slope_ST > 1.0 and exercise_angina=0 then 2
+(defrule r8
    (declare (salience 80))
    (Patient (thal ?th))
    (Patient (vessels_flourosopy ?vf))
-   (Patient (chest_pain_type ?chp))
+   (Patient (slope_ST ?slope))
+   (Patient (exercise_angina ?exang))
    (and (test (= ?th 7))
         (test (= ?vf 0)))
-   (test (< ?chp 4))
+   (and (test (> ?slope_ST 1.0))
+        (test (= ?exang 0)))
    =>
    (assert (Diagnosis (diagnosis 1)))
    (printout t "No heart desease diagnosed" crlf))
 
 
-; thal=3 and vessels_flourosopy=3 then 2 (rule 11)
-(defrule r11
+; thal=7 and vessels_flourosopy = 0 and slope_ST > 1.0 and exercise_angina=0 then 2
+(defrule r9
    (declare (salience 80))
    (Patient (thal ?th))
    (Patient (vessels_flourosopy ?vf))
-   (test (and (= ?th 3) (= ?vf 3)))
-   =>
-   (assert (Diagnosis (diagnosis 2)))
-   (printout t "Heart desease diagnosed" crlf))
-
-
-; thal=3 and vessels_flourosopy=2 and exercise_angina=1 then 2 (rule 12)
-(defrule r12
-   (declare (salience 80))
-   (Patient (thal ?th))
-   (Patient (vessels_flourosopy ?vf))
-   (Patient (exercise_angina ?ea))
-   (and (test (= ?th 3))
-        (test (= ?vf 2)))
-   (and (test (= ?ea 1)))
-   =>
-   (assert (Diagnosis (diagnosis 2)))
-   (printout t "Heart desease diagnosed" crlf))
-   
-
-; thal=3 and vessels_flourosopy=2 and exercise_angina=0 and age>62 then 1 (rule 13)
-(defrule r13
-   (declare (salience 80))
-   (Patient (thal ?th))
-   (Patient (vessels_flourosopy ?vf))
-   (Patient (exercise_angina ?ea))
-   (Patient (age ?ag))
-   (and (test (= ?th 3))
-        (test (= ?vf 2)))
-   (and (test (= ?ea 0))
-        (test (< ?ag 62)))
-   =>
-   (assert (Diagnosis (diagnosis 1)))
-   (printout t " No heart desease diagnosed" crlf))
-   
-
-; thal=3 and vessels_flourosopy=2 and exercise_angina=0 and age<=62 then 2 (rule 14)
-(defrule r14
-   (declare (salience 80))
-   (Patient (thal ?th))
-   (Patient (vessels_flourosopy ?vf))
-   (Patient (exercise_angina ?ea))
-   (Patient (age ?ag))
-   (and (test (= ?th 3))
-        (test (= ?vf 2)))
-   (and (test (= ?ea 0))
-        (test (>= ?ag 62)))
-   =>
-   (assert (Diagnosis (diagnosis 2)))
-   (printout t "Heart desease diagnosed" crlf))
-   
-
-; thal=3 and vessels_flourosopy=1 and sex=1 and chest_pain_type=4 then 2 (rule 15)
-(defrule r15
-   (declare (salience 80))
-   (Patient (thal ?th))
-   (Patient (vessels_flourosopy ?vf))
-   (Patient (sex ?se))
-   (Patient (chest_pain_type ?cpt))
-   (and (test (= ?th 3))
-        (test (= ?vf 1)))
-   (and (test (= ?se 1))
-        (test (= ?cpt 4)))
-   =>
-   (assert (Diagnosis (diagnosis 2)))
-   (printout t "Heart desease diagnosed" crlf))   
-
-
-; thal=3 and vessels_flourosopy=1 and sex=1 and chest_pain_type<=3 then 1 (rules 16,17,18)
-(defrule r16_17_18
-   (declare (salience 80))
-   (Patient (thal ?th))
-   (Patient (vessels_flourosopy ?vf))
-   (Patient (sex ?se))
-   (Patient (chest_pain_type ?cpt))
-   (and (test (= ?th 3))
-        (test (= ?vf 1)))
-   (and (test (= ?se 1))
-        (test (>= ?cpt 3)))
-   =>
-   (assert (Diagnosis (diagnosis 1)))
-   (printout t " No heart desease diagnosed" crlf))    
-
-   
-; thal=3 and vessels_flourosopy=1 and sex=0 then no (rule 19)
-(defrule r19
-   (declare (salience 80))
-   (Patient (thal ?th))
-   (Patient (vessels_flourosopy ?vf))
-   (Patient (sex ?se))
-   (and (test (= ?th 3))
-        (test (= ?vf 1)))
-   (and (test (= ?se 0)))
-        
-   =>
-   (assert (Diagnosis (diagnosis 1)))
-   (printout t " No heart desease diagnosed" crlf))  
-   
-
-; thal=3 and vessels_flourosopy=0 and blood_pressure>156 and  age>62 then 1 (rule 20)
-(defrule r20
-   (declare (salience 80))
-   (Patient (thal ?th))
-   (Patient (vessels_flourosopy ?vf))
-(Patient (blood_pressure ?bp))
-   (Patient (age ?ag))
-   (and (test (= ?th 3))
+   (Patient (slope_ST ?slope))
+   (Patient (exercise_angina ?exang))
+   (and (test (= ?th 7))
         (test (= ?vf 0)))
-   (and (test (< ?bp 156))
-        (test (< ?ag 62)))
-   =>
-   (assert (Diagnosis (diagnosis 1)))
-   (printout t "No heart desease diagnosed" crlf))
-   
-
-; thal=3 and vessels_flourosopy=0 and blood_pressure>156 and  age<=62 then 2 (rule 21)
-(defrule r21
-   (declare (salience 80))
-   (Patient (thal ?th))
-   (Patient (vessels_flourosopy ?vf))
-(Patient (blood_pressure ?bp))
-   (Patient (age ?ag))
-   (and (test (= ?th 3))
-        (test (= ?vf 0)))
-   (and (test (< ?bp 156))
-        (test (>= ?ag 62)))
-   =>
-   (assert (Diagnosis (diagnosis 2)))
-   (printout t "Heart desease diagnosed" crlf))
-
-
-; thal=3 and vessels_flourosopy=0 and blood_pressure<=156 then 1 (rule 22)
-(defrule r22
-   (declare (salience 80))
-   (Patient (thal ?th))
-   (Patient (vessels_flourosopy ?vf))
-(Patient (blood_pressure ?bp))
-(and (test (= ?th 3))
-        (test (= ?vf 0)))
-   (and (test (>= ?bp 156)))
-        
+   (test (<= ?slope_ST 1.0))
    =>
    (assert (Diagnosis (diagnosis 1)))
    (printout t "No heart desease diagnosed" crlf))
