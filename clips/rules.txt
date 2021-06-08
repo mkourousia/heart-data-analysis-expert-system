@@ -27,25 +27,23 @@ sex
 
 12. όταν thal=3 και vessels_flourosopy=2 και exercise_angina=1 τότε 2
 
-13. όταν thal=3 και vessels_flourosopy=3 τοτε 2
+13. όταν thal=3 και vessels_flourosopy=2 και exercise_angina=0 και age>62 τότε 1
 
-14. όταν thal=3 και vessels_flourosopy=2 και exercise_angina=0 και age>62 τότε 1
+14. όταν thal=3 και vessels_flourosopy=2 και exercise_angina=0 και age<=62 τότε 2
 
-15. όταν thal=3 και vessels_flourosopy=2 και exercise_angina=0 και age<=62 τότε 2
+15. όταν thal=3 και vessels_flourosopy=1 και sex=1 και chest_pain_type=4 τότε 2
 
-16. όταν thal=3 και vessels_flourosopy=1 και sex=1 και chest_pain_type=4 τότε 2
+16. όταν thal=3 και vessels_flourosopy=1 και sex=1 και chest_pain_type=3 τότε 1
+17. όταν thal=3 και vessels_flourosopy=1 και sex=1 και chest_pain_type=2 τότε 1
+18. όταν thal=3 και vessels_flourosopy=1 και sex=1 και chest_pain_type=1 τότε 1
 
-17. όταν thal=3 και vessels_flourosopy=1 και sex=1 και chest_pain_type=3 τότε 1
-18. όταν thal=3 και vessels_flourosopy=1 και sex=1 και chest_pain_type=2 τότε 1
-19. όταν thal=3 και vessels_flourosopy=1 και sex=1 και chest_pain_type=1 τότε 1
+19. όταν thal=3 και vessels_flourosopy=1 και sex=0 τότε 1
 
-20. όταν thal=3 και vessels_flourosopy=1 και sex=0 τότε 1
+20. όταν thal=3 και vessels_flourosopy=0 και blood_pressure>156 και age>62 τότε 1
 
-21. όταν thal=3 και vessels_flourosopy=0 και blood_pressure>156 και age>62 τότε 1
+21. όταν thal=3 και vessels_flourosopy=0 και blood_pressure>156 και age<=62 τότε 2
 
-22. όταν thal=3 και vessels_flourosopy=0 και blood_pressure>156 και age<=62 τότε 2
-
-23. όταν thal=3 και vessels_flourosopy=0 και blood_pressure<=156 τότε 1
+22. όταν thal=3 και vessels_flourosopy=0 και blood_pressure<=156 τότε 1
 
 
 
