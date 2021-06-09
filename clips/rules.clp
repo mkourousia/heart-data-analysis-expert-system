@@ -7,11 +7,14 @@
    (slot slope_ST)
    (slot vessels_flourosopy)
    (slot thal)
+   (slot class)
 )
 
 
 (deftemplate Diagnosis
+ (slot id (type INTEGER))
  (slot diagnosis (type INTEGER) (range 1 2))
+ (slot realClass (type INTEGER) (range 1 2))
 )
 
 
@@ -41,7 +44,7 @@ do
 
 (assert (Patient (id ?id) (sex ?sex) (chest_pain_type ?chest_pain_type) 
                (exercise_angina ?exercise_angina)(slope_ST ?slope_ST)
-               (vessels_flourosopy ?vessels_flourosopy) (thal ?thal)))              
+               (vessels_flourosopy ?vessels_flourosopy) (thal ?thal) (class ?class)))              
 (bind ?id (+ ?id 1))
 )
 (close inputfile)
@@ -51,116 +54,113 @@ do
 ; thal!=7 and vessels_flourosopy = 3 then 2
 (defrule r1
    (declare (salience 80))
-   (Patient (thal ?th)(vessels_flourosopy ?vf))
+   (Patient (id ?id)(thal ?th)(vessels_flourosopy ?vf)(class ?class))
    (test (and (<> ?th 7) (= ?vf 3)))
    =>
-   (assert (Diagnosis (diagnosis 2)))
-   (printout t "Heart desease diagnosed" crlf))
+   (assert (Diagnosis (id ?id) (diagnosis 2) (realClass ?class)))
+   (printout t "2" crlf))
+
 
 
 ; thal!=7 και vessels_flourosopy !=3 !=0 and sex!=0 and chest_pain !=4 then 1
 (defrule r2
    (declare (salience 80))
-   (Patient (thal ?th)(vessels_flourosopy ?vf)(chest_pain_type ?chp)(sex ?sex))
+   (Patient (id ?id)(thal ?th)(vessels_flourosopy ?vf)(chest_pain_type ?chp)(sex ?sex)(class ?class))
    (and (test (<> ?th 7))
         (test (and (<> ?vf 0) (<> ?vf 3))))
    (and (test (<> ?chp 4))
         (test (= ?sex 1)))
    =>
-   (assert (Diagnosis (diagnosis 1)))
-   (printout t "No heart desease diagnosed" crlf))
+   (assert (Diagnosis (id ?id) (diagnosis 1) (realClass ?class)))
+   (printout t "1" crlf))
 
 
 ; thal!=7 και vessels_flourosopy !=3 !=0 and sex!=0 and chest_pain !=4 then 2
 (defrule r3
    (declare (salience 80))
-   (Patient (thal ?th)(vessels_flourosopy ?vf)(chest_pain_type ?chp)(sex ?sex))
+   (Patient (id ?id)(thal ?th)(vessels_flourosopy ?vf)(chest_pain_type ?chp)(sex ?sex)(class ?class))
    (and (test (<> ?th 7))
         (test (and (<> ?vf 0) (<> ?vf 3))))
    (and (test (= ?chp 4))
         (test (= ?sex 1)))
    =>
-   (assert (Diagnosis (diagnosis 2)))
-   (printout t "Heart desease diagnosed" crlf))
+   (assert (Diagnosis (id ?id) (diagnosis 2) (realClass ?class)))
+   (printout t "2" crlf))
 
 
 ; thal!=7 και vessels_flourosopy !=3 !=0 and sex!=0 and chest_pain !=4 then 1
 (defrule r4
    (declare (salience 80))
-   (Patient (thal ?th) (vessels_flourosopy ?vf)(chest_pain_type ?chp)(sex ?sex))
+   (Patient (id ?id)(thal ?th) (vessels_flourosopy ?vf)(chest_pain_type ?chp)(sex ?sex)(class ?class))
    (and (test (<> ?th 7))
         (test (!= ?vf 0)))
    (and (test (<> ?vf 3))
         (test (= ?sex 0)))
    (test (<> ?chp 4))
    =>
-   (assert (Diagnosis (diagnosis 1)))
-   (printout t "No heart desease diagnosed" crlf))
+   (assert (Diagnosis (id ?id) (diagnosis 1) (realClass ?class)))
+   (printout t "1" crlf))
 
 
 ; thal!=7 and vessels_flourosopy = 3 then 2
 (defrule r5
    (declare (salience 80))
-   (Patient (thal ?th)(vessels_flourosopy ?vf))
+   (Patient (id ?id)(thal ?th)(vessels_flourosopy ?vf)(class ?class))
    (test (and (= ?th 7) (= ?vf 3)))
    =>
-   (assert (Diagnosis (diagnosis 2)))
-   (printout t "Heart desease diagnosed" crlf))
+   (assert (Diagnosis (id ?id) (diagnosis 2) (realClass ?class)))
+   (printout t "2" crlf))
 
 
 ; thal=7 and vessels_flourosopy != 0 then 2
 (defrule r6
    (declare (salience 80))
-   (Patient (thal ?th) (vessels_flourosopy ?vf))
+   (Patient (id ?id)(thal ?th) (vessels_flourosopy ?vf)(class ?class))
    (test (and (= ?th 7) (<> ?vf 0)))
    =>
-   (assert (Diagnosis (diagnosis 2)))
-   (printout t "Heart desease diagnosed" crlf))
+   (assert (Diagnosis (id ?id) (diagnosis 2) (realClass ?class)))
+   (printout t "2" crlf))
 
 
 ; thal=7 and vessels_flourosopy = 0 and slope_ST > 1.0 and exercise_angina !=0 then 2
 (defrule r7
    (declare (salience 80))
-   (Patient (thal ?th) (vessels_flourosopy ?vf)(slope_ST ?slope)(exercise_angina ?exang))
+   (Patient (id ?id)(thal ?th) (vessels_flourosopy ?vf)(slope_ST ?slope)(exercise_angina ?exang)(class ?class))
    (and (test (= ?th 7))
         (test (= ?vf 0)))
    (and (test (> ?slope 1.0))
         (test (<> ?exang 0)))
    =>
-   (assert (Diagnosis (diagnosis 2)))
-   (printout t "Heart desease diagnosed" crlf))
+   (assert (Diagnosis (id ?id) (diagnosis 2) (realClass ?class)))
+   (printout t "2" crlf))
 
 
-; thal=7 and vessels_flourosopy = 0 and slope_ST > 1.0 and exercise_angina=0 then 2
+; thal=7 and vessels_flourosopy = 0 and slope_ST > 1.0 and exercise_angina=0 then 1
 (defrule r8
    (declare (salience 80))
-   (Patient (thal ?th) (vessels_flourosopy ?vf)(slope_ST ?slope)(exercise_angina ?exang))
+   (Patient (id ?id)(thal ?th) (vessels_flourosopy ?vf)(slope_ST ?slope)(exercise_angina ?exang)(class ?class))
    (and (test (= ?th 7))
         (test (= ?vf 0)))
    (and (test (> ?slope 1.0))
         (test (= ?exang 0)))
    =>
-   (assert (Diagnosis (diagnosis 1)))
-   (printout t "No heart desease diagnosed" crlf))
+   (assert (Diagnosis (id ?id) (diagnosis 1) (realClass ?class)))
+   (printout t "1" crlf))
 
 
-; thal=7 and vessels_flourosopy = 0 and slope_ST > 1.0 and exercise_angina=0 then 2
+; thal=7 and vessels_flourosopy = 0 and slope_ST > 1.0 and exercise_angina=0 then 1
 (defrule r9
    (declare (salience 80))
-   (Patient (thal ?th) (vessels_flourosopy ?vf)(slope_ST ?slope)(exercise_angina ?exang))
+   (Patient (id ?id)(thal ?th) (vessels_flourosopy ?vf)(slope_ST ?slope)(exercise_angina ?exang)(class ?class))
    (and (test (= ?th 7))
         (test (= ?vf 0)))
    (test (<= ?slope 1.0))
    =>
-   (assert (Diagnosis (diagnosis 1)))
-   (printout t "No heart desease diagnosed" crlf))
+   (assert (Diagnosis (id ?id) (diagnosis 1) (realClass ?class)))
+   (printout t "1" crlf))
 
 
-; TEMPORARY
-(deffacts Symptoms
-   (Patient (sex 8) 
-            (chest_pain_type 5) 
-            (exercise_angina 1)
-            (slope_ST 2)
-            (vessels_flourosopy 0)
-            (thal 7))) 
+(defrule metrics
+     =>
+     (load "C:/Users/mariak/heart-data-analysis-expert-system/clips/metrics/metrics.clp")
+)
