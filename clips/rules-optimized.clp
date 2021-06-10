@@ -75,7 +75,7 @@ do
    (printout t "1" crlf))
 
 
-; thal!=7 και vessels_flourosopy !=3 !=0 and sex!=0 and chest_pain !=4 then 2
+; thal!=7 και vessels_flourosopy !=3 !=0 and sex!=0 and chest_pain =4 then 2
 (defrule r3
    (declare (salience 80))
    (Patient (id ?id)(thal ?th)(vessels_flourosopy ?vf)(chest_pain_type ?chp)(sex ?sex)(class ?class))
@@ -88,7 +88,7 @@ do
    (printout t "2" crlf))
 
 
-; thal!=7 και vessels_flourosopy !=3 !=0 and sex!=0 and chest_pain !=4 then 1
+; thal!=7 και vessels_flourosopy !=3 !=0 and sex=0 then 1
 (defrule r4
    (declare (salience 80))
    (Patient (id ?id)(thal ?th) (vessels_flourosopy ?vf)(chest_pain_type ?chp)(sex ?sex)(class ?class))
@@ -96,7 +96,6 @@ do
         (test (!= ?vf 0)))
    (and (test (<> ?vf 3))
         (test (= ?sex 0)))
-   (test (<> ?chp 4))
    =>
    (assert (Diagnosis (id ?id) (diagnosis 1) (realClass ?class)))
    (printout t "1" crlf))
