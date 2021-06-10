@@ -49,10 +49,10 @@
 (printout t "Selection 1: Load training set" crlf "Selection 2: Load test set" crlf)
 (bind ?response (read))
 (if (= ?response 1) then
-(open "C:/Users/man0s/Desktop/heart-data-analysis-expert-system-main/input/input-training-set.clp" inputfile "r")
+(open "C:/Users/man0s/Desktop/heart-data-analysis-expert-system-main/clips/input/input-training-set.clp" inputfile "r")
 (printout t "Training set loaded" crlf crlf)
 else
-(open "C:/Users/man0s/Desktop/heart-data-analysis-expert-system-main/input/input-test-set.clp" inputfile "r")
+(open "C:/Users/man0s/Desktop/heart-data-analysis-expert-system-main/clips/input/input-test-set.clp" inputfile "r")
 (printout t "Test set loaded" crlf crlf)
 )
 
@@ -196,5 +196,5 @@ do
 
 (defrule metrics
      =>
-     (load "C:/Users/man0s/Desktop/heart-data-analysis-expert-system-main/metrics.clp")
+     (load "C:/Users/man0s/Desktop/heart-data-analysis-expert-system-main/clips/metrics.clp")
 )
