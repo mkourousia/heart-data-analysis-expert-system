@@ -61,8 +61,7 @@ do
    (printout t "2" crlf))
 
 
-
-; thal!=7 και vessels_flourosopy !=3 !=0 and sex!=0 and chest_pain !=4 then 1
+; thal!=7 και vessels_flourosopy !=3 !=0 and sex=1 and chest_pain !=4 then 1
 (defrule r2
    (declare (salience 80))
    (Patient (id ?id)(thal ?th)(vessels_flourosopy ?vf)(chest_pain_type ?chp)(sex ?sex)(class ?class))
@@ -75,7 +74,7 @@ do
    (printout t "1" crlf))
 
 
-; thal!=7 και vessels_flourosopy !=3 !=0 and sex!=0 and chest_pain !=4 then 2
+; thal!=7 και vessels_flourosopy !=3 !=0 and sex!=0 and chest_pain =4 then 2
 (defrule r3
    (declare (salience 80))
    (Patient (id ?id)(thal ?th)(vessels_flourosopy ?vf)(chest_pain_type ?chp)(sex ?sex)(class ?class))
@@ -88,28 +87,27 @@ do
    (printout t "2" crlf))
 
 
-; thal!=7 και vessels_flourosopy !=3 !=0 and sex!=0 and chest_pain !=4 then 1
+; thal!=7 και vessels_flourosopy !=3 !=0 and sex=0 then 1
 (defrule r4
    (declare (salience 80))
    (Patient (id ?id)(thal ?th) (vessels_flourosopy ?vf)(chest_pain_type ?chp)(sex ?sex)(class ?class))
    (and (test (<> ?th 7))
-        (test (!= ?vf 0)))
+        (test (<> ?vf 0)))
    (and (test (<> ?vf 3))
         (test (= ?sex 0)))
-   (test (<> ?chp 4))
    =>
    (assert (Diagnosis (id ?id) (diagnosis 1) (realClass ?class)))
    (printout t "1" crlf))
 
 
-; thal!=7 and vessels_flourosopy = 3 then 2
+; thal!=7 and vessels_flourosopy=0 then 1
 (defrule r5
    (declare (salience 80))
    (Patient (id ?id)(thal ?th)(vessels_flourosopy ?vf)(class ?class))
-   (test (and (<> ?th 7) (= ?vf 3)))
+   (test (and (<> ?th 7) (= ?vf 0)))
    =>
-   (assert (Diagnosis (id ?id) (diagnosis 2) (realClass ?class)))
-   (printout t "2" crlf))
+   (assert (Diagnosis (id ?id) (diagnosis 1) (realClass ?class)))
+   (printout t "1" crlf))
 
 
 ; thal=7 and vessels_flourosopy != 0 then 2
@@ -148,7 +146,7 @@ do
    (printout t "1" crlf))
 
 
-; thal=7 and vessels_flourosopy = 0 and slope_ST > 1.0 and exercise_angina=0 then 1
+; thal=7 and vessels_flourosopy = 0 and slope_ST <= 1.0 and exercise_angina=0 then 1
 (defrule r9
    (declare (salience 80))
    (Patient (id ?id)(thal ?th) (vessels_flourosopy ?vf)(slope_ST ?slope)(exercise_angina ?exang)(class ?class))
