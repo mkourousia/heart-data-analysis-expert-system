@@ -12,14 +12,14 @@
 
 (deftemplate slope_ST_fuzzy
 1 3
-((small (1 1) (2 0))
-(big (2 0) (3 1)))
+((small (z 1 1))
+(big (s 2 3)))
 )
 
 (deftemplate thal_fuzzy
 3 7
-((normal (3 1) (6 0))
-(increased (6 0) (7 1)))
+((low (z 3 6))
+(high (s 7 7)))
 )
  
 (deftemplate Patient_fuzzy
@@ -37,9 +37,9 @@
 
 (deftemplate Diagnosis
  (slot id (type INTEGER))
- (slot predicted_class (type INTEGER) (range 1 2))
- (slot real_class (type INTEGER) (range 1 2))
- (slot nr(type INTEGER) (range 1 22))
+ (slot diagnosis (type INTEGER) (range 1 2))
+ (slot realClass (type INTEGER) (range 1 2))
+
 )
 
 
@@ -89,8 +89,103 @@ do
 ; thal!=7 and vessels_flourosopy = 3 then 2
 (defrule r1
    (declare (salience 80))
-   ?f <- (Patient_fuzzy (id ?id) (vessels_flourosopy ?vf) (class ?class))
+   ?f <- (Patient_fuzzy (id ?id) (thal-fuzzy low) (vessels_flourosopy ?vf) (class ?class))
    (test (= ?vf 3))
    =>
-   (assert (Diagnosis (id ?id) (predicted_class 2) (real_class ?class) (nr 1)))
+   (assert (Diagnosis (id ?id) (diagnosis 2) (realClass ?class)))
    (retract ?f))
+   
+ ; thal!=7 και vessels_flourosopy !=3 !=0 and sex=0 and chest_pain !=4 then 1
+(defrule r2
+   (declare (salience 80))
+   ?f <- (Patient_fuzzy (id ?id) (thal-fuzzy low) (vessels_flourosopy ?vf) (chest_pain_type ?chp) (sex ?sex) (class ?class))
+   (test (<> ?vf 0))
+   (test (<> ?vf 3))
+   (test (<> ?chp 4))
+   (test (= ?sex 0))
+   =>
+   (assert (Diagnosis (id ?id) (diagnosis 1) (realClass ?class)))
+   (retract ?f))
+
+
+; thal!=7 και vessels_flourosopy !=3 !=0 and sex!=0 and chest_pain =4 then 2
+(defrule r3
+   (declare (salience 80))
+   ?f <- (Patient_fuzzy (id ?id) (thal-fuzzy low) (vessels_flourosopy ?vf) (chest_pain_type ?chp) (sex ?sex) (class ?class))
+   (test (<> ?vf 0))
+   (test (<> ?vf 3))
+   (test (= ?chp 4))
+   (test (= ?sex 1))
+   =>
+   (assert (Diagnosis (id ?id) (diagnosis 2) (realClass ?class)))
+   (retract ?f))
+
+
+; thal!=7 και vessels_flourosopy !=3 !=0 and sex=0 then 1
+(defrule r4
+   (declare (salience 80))
+   ?f <- (Patient_fuzzy (id ?id) (thal-fuzzy low) (vessels_flourosopy ?vf) (chest_pain_type ?chp) (sex ?sex) (class ?class))
+   (test (<> ?vf 0))
+   (test (<> ?vf 3))
+   (test (= ?sex 0))
+   =>
+   (assert (Diagnosis (id ?id) (diagnosis 1) (realClass ?class)))
+   (retract ?f))
+
+
+; thal!=7 and vessels_flourosopy = 0 then 1
+(defrule r5
+   (declare (salience 80))
+   ?f <- (Patient_fuzzy (id ?id) (thal-fuzzy low) (vessels_flourosopy ?vf) (class ?class))
+   (test (= ?vf 0))
+   =>
+   (assert (Diagnosis (id ?id) (diagnosis 2) (realClass ?class)))
+   (retract ?f))
+
+
+; thal=7 and vessels_flourosopy != 0 then 2
+(defrule r6
+   (declare (salience 80))
+   ?f <- (Patient_fuzzy (id ?id) (thal-fuzzy high) (vessels_flourosopy ?vf) (class ?class))
+   (test (<> ?vf 0))
+   =>
+   (assert (Diagnosis (id ?id) (diagnosis 2) (realClass ?class)))
+   (retract ?f))
+
+
+; thal=7 and vessels_flourosopy = 0 and slope_ST > 1.0 and exercise_angina !=0 then 2
+(defrule r7
+   (declare (salience 80))
+   ?f <- (Patient_fuzzy (id ?id) (thal-fuzzy high) (vessels_flourosopy ?vf) (slope_ST-fuzzy big) (exercise_angina ?exang) (class ?class))
+   (test (= ?vf 0))
+   (test (<> ?exang 0))
+   =>
+   (assert (Diagnosis (id ?id) (diagnosis 2) (realClass ?class)))
+   (retract ?f))
+
+
+; thal=7 and vessels_flourosopy = 0 and slope_ST > 1.0 and exercise_angina=0 then 1
+(defrule r8
+   (declare (salience 80))
+   ?f <- (Patient_fuzzy (id ?id) (thal-fuzzy high) (vessels_flourosopy ?vf) (slope_ST-fuzzy big) (exercise_angina ?exang) (class ?class))
+   (test (= ?vf 0))
+   (test (= ?exang 0))
+   =>
+   (assert (Diagnosis (id ?id) (diagnosis 1) (realClass ?class)))
+   (retract ?f))
+
+
+; thal=7 and vessels_flourosopy = 0 and slope_ST <=1.0 and exercise_angina=0 then 1
+(defrule r9
+   (declare (salience 80))
+   ?f <- (Patient_fuzzy (id ?id) (thal-fuzzy high) (vessels_flourosopy ?vf) (slope_ST-fuzzy small) (exercise_angina ?exang) (class ?class))
+   (test (= ?vf 0))
+   =>
+   (assert (Diagnosis (id ?id) (diagnosis 1) (realClass ?class)))
+   (retract ?f))
+   
+
+(defrule metrics
+     =>
+     (load "C:/Users/man0s/Desktop/heart-data-analysis-expert-system-main/heart-data-analysis-expert-system-main/clips/metrics.clp")
+)
