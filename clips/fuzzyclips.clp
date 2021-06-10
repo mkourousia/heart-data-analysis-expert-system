@@ -1,37 +1,37 @@
 (deftemplate Patient
    (slot id (type INTEGER))
-   (slot sex)
-   (slot chest_pain_type)
-   (slot serum_cholestoral)
-   (slot exercise_angina)
-   (slot slope_ST (type NUMBER))
-   (slot vessels_flourosopy)
+   (slot sex (type NUMBER))
+   (slot chest_pain_type (type NUMBER))
+   (slot serum_cholestoral (type NUMBER))
+   (slot exercise_angina(type NUMBER))
+   (slot slope_ST(type NUMBER))
+   (slot vessels_flourosopy(type NUMBER))
    (slot thal (type NUMBER))
-   (slot class)
+   (slot class (type INTEGER) (range 1 2))
 )
 
-(deftemplate slope_ST_fuzzy
-1 3
-((small (z 1 1))
-(big (s 2 3)))
+(deftemplate chest_pain_type_fuzzy
+1.0 4.0
+((low (1.0 1) (2.0 1))
+(high (3.0 1) (4.0 1)))
 )
 
-(deftemplate thal_fuzzy
-3 7
-((low (z 3 6))
-(high (s 7 7)))
+(deftemplate vessels_flourosopy_fuzzy
+0.0 3.0
+((few (0.0 1))
+(many (1.0 1) (2.0 1) (3.0 1)))
 )
  
 (deftemplate Patient_fuzzy
    (slot id (type INTEGER))
-   (slot sex)
-   (slot chest_pain_type)
-   (slot serum_cholestoral)
-   (slot exercise_angina)
-   (slot slope_ST-fuzzy (type FUZZY-VALUE slope_ST_fuzzy))
-   (slot vessels_flourosopy)
-   (slot thal-fuzzy (type FUZZY-VALUE thal_fuzzy))
-   (slot class)
+   (slot sex (type NUMBER))
+   (slot chest_pain_type-fuzzy (type FUZZY-VALUE chest_pain_type_fuzzy))
+   (slot serum_cholestoral (type NUMBER))
+   (slot exercise_angina(type NUMBER))
+   (slot slope_ST (type NUMBER))
+   (slot vessels_flourosopy-fuzzy(type FUZZY-VALUE vessels_flourosopy_fuzzy))
+   (slot thal (type NUMBER))
+   (slot class (type INTEGER) (range 1 2))
 )
 
 
@@ -81,16 +81,17 @@ do
                (exercise_angina ?exercise_angina)(slope_ST ?slope_ST)
                (vessels_flourosopy ?vessels_flourosopy) (thal ?thal) (class ?class))
  =>
-  (assert (Patient_fuzzy (id ?id) (sex ?sex) (chest_pain_type ?chest_pain_type) 
-               (exercise_angina ?exercise_angina)(slope_ST-fuzzy (?slope_ST 0) (?slope_ST 1))
-               (vessels_flourosopy ?vessels_flourosopy) (thal-fuzzy (?thal 0) (?thal 1)) (class ?class)))
+  (assert (Patient_fuzzy (id ?id) (sex ?sex) (chest_pain_type-fuzzy (?chest_pain_type 0) (?chest_pain_type 1)) 
+               (exercise_angina ?exercise_angina)(slope_ST ?slope_ST)
+               (vessels_flourosopy-fuzzy (?vessels_flourosopy 0) (?vessels_flourosopy 1) (?vessels_flourosopy 0)) (thal ?thal) (class ?class)))
 )
 
 ; thal!=7 and vessels_flourosopy = 3 then 2
 (defrule r1
    (declare (salience 80))
-   ?f <- (Patient_fuzzy (id ?id) (thal-fuzzy low) (vessels_flourosopy ?vf) (class ?class))
-   (test (= ?vf 3))
+   ?f <- (Patient_fuzzy (id ?id) (thal ?th) (vessels_flourosopy-fuzzy many) (class ?class))
+   (test (<> ?th 7))
+;  (test (= ?vf 3))
    =>
    (assert (Diagnosis (id ?id) (diagnosis 2) (realClass ?class)))
    (retract ?f))
@@ -98,10 +99,11 @@ do
  ; thal!=7 και vessels_flourosopy !=3 !=0 and sex=0 and chest_pain !=4 then 1
 (defrule r2
    (declare (salience 80))
-   ?f <- (Patient_fuzzy (id ?id) (thal-fuzzy low) (vessels_flourosopy ?vf) (chest_pain_type ?chp) (sex ?sex) (class ?class))
-   (test (<> ?vf 0))
-   (test (<> ?vf 3))
-   (test (<> ?chp 4))
+   ?f <- (Patient_fuzzy (id ?id) (thal ?th) (vessels_flourosopy-fuzzy many) (chest_pain_type-fuzzy low) (sex ?sex) (class ?class))
+   (test (<> ?th 7))
+;  (test (<> ?vf 0))
+;  (test (<> ?vf 3))
+;  (test (< ?chp 3))
    (test (= ?sex 0))
    =>
    (assert (Diagnosis (id ?id) (diagnosis 1) (realClass ?class)))
@@ -111,10 +113,11 @@ do
 ; thal!=7 και vessels_flourosopy !=3 !=0 and sex!=0 and chest_pain =4 then 2
 (defrule r3
    (declare (salience 80))
-   ?f <- (Patient_fuzzy (id ?id) (thal-fuzzy low) (vessels_flourosopy ?vf) (chest_pain_type ?chp) (sex ?sex) (class ?class))
-   (test (<> ?vf 0))
-   (test (<> ?vf 3))
-   (test (= ?chp 4))
+   ?f <- (Patient_fuzzy (id ?id) (thal ?th) (vessels_flourosopy-fuzzy many) (chest_pain_type-fuzzy high) (sex ?sex) (class ?class))
+   (test (<> ?th 7))
+;  (test (<> ?vf 0))
+;  (test (<> ?vf 3))
+;  (test (>= ?chp 3))
    (test (= ?sex 1))
    =>
    (assert (Diagnosis (id ?id) (diagnosis 2) (realClass ?class)))
@@ -124,9 +127,10 @@ do
 ; thal!=7 και vessels_flourosopy !=3 !=0 and sex=0 then 1
 (defrule r4
    (declare (salience 80))
-   ?f <- (Patient_fuzzy (id ?id) (thal-fuzzy low) (vessels_flourosopy ?vf) (chest_pain_type ?chp) (sex ?sex) (class ?class))
-   (test (<> ?vf 0))
-   (test (<> ?vf 3))
+   ?f <- (Patient_fuzzy (id ?id) (thal ?th) (vessels_flourosopy-fuzzy many) (sex ?sex) (class ?class))
+   (test (<> ?th 7))   
+;  (test (<> ?vf 0))
+;  (test (<> ?vf 3))
    (test (= ?sex 0))
    =>
    (assert (Diagnosis (id ?id) (diagnosis 1) (realClass ?class)))
@@ -136,8 +140,9 @@ do
 ; thal!=7 and vessels_flourosopy = 0 then 1
 (defrule r5
    (declare (salience 80))
-   ?f <- (Patient_fuzzy (id ?id) (thal-fuzzy low) (vessels_flourosopy ?vf) (class ?class))
-   (test (= ?vf 0))
+   ?f <- (Patient_fuzzy (id ?id) (thal ?th) (vessels_flourosopy-fuzzy few) (class ?class))
+   (test (<> ?th 7))   
+;  (test (= ?vf 0))
    =>
    (assert (Diagnosis (id ?id) (diagnosis 2) (realClass ?class)))
    (retract ?f))
@@ -146,8 +151,9 @@ do
 ; thal=7 and vessels_flourosopy != 0 then 2
 (defrule r6
    (declare (salience 80))
-   ?f <- (Patient_fuzzy (id ?id) (thal-fuzzy high) (vessels_flourosopy ?vf) (class ?class))
-   (test (<> ?vf 0))
+   ?f <- (Patient_fuzzy (id ?id) (thal ?th) (vessels_flourosopy-fuzzy many) (class ?class))
+   (test (= ?th 7))   
+;  (test (<> ?vf 0))
    =>
    (assert (Diagnosis (id ?id) (diagnosis 2) (realClass ?class)))
    (retract ?f))
@@ -156,8 +162,9 @@ do
 ; thal=7 and vessels_flourosopy = 0 and slope_ST > 1.0 and exercise_angina !=0 then 2
 (defrule r7
    (declare (salience 80))
-   ?f <- (Patient_fuzzy (id ?id) (thal-fuzzy high) (vessels_flourosopy ?vf) (slope_ST-fuzzy big) (exercise_angina ?exang) (class ?class))
-   (test (= ?vf 0))
+   ?f <- (Patient_fuzzy (id ?id) (thal ?th) (vessels_flourosopy-fuzzy few) (slope_ST ?slope_ST) (exercise_angina ?exang) (class ?class))
+   (test (= ?th 7))
+;  (test (= ?vf 0))
    (test (<> ?exang 0))
    =>
    (assert (Diagnosis (id ?id) (diagnosis 2) (realClass ?class)))
@@ -167,8 +174,9 @@ do
 ; thal=7 and vessels_flourosopy = 0 and slope_ST > 1.0 and exercise_angina=0 then 1
 (defrule r8
    (declare (salience 80))
-   ?f <- (Patient_fuzzy (id ?id) (thal-fuzzy high) (vessels_flourosopy ?vf) (slope_ST-fuzzy big) (exercise_angina ?exang) (class ?class))
-   (test (= ?vf 0))
+   ?f <- (Patient_fuzzy (id ?id) (thal ?th) (vessels_flourosopy-fuzzy few) (slope_ST ?slope_ST) (exercise_angina ?exang) (class ?class))
+   (test (= ?th 7))
+;  (test (= ?vf 0))
    (test (= ?exang 0))
    =>
    (assert (Diagnosis (id ?id) (diagnosis 1) (realClass ?class)))
@@ -178,8 +186,9 @@ do
 ; thal=7 and vessels_flourosopy = 0 and slope_ST <=1.0 and exercise_angina=0 then 1
 (defrule r9
    (declare (salience 80))
-   ?f <- (Patient_fuzzy (id ?id) (thal-fuzzy high) (vessels_flourosopy ?vf) (slope_ST-fuzzy small) (exercise_angina ?exang) (class ?class))
-   (test (= ?vf 0))
+   ?f <- (Patient_fuzzy (id ?id) (thal ?th) (vessels_flourosopy-fuzzy few) (slope_ST ?slope_ST) (exercise_angina ?exang) (class ?class))
+   (test (= ?th 7))
+;  (test (= ?vf 0))
    =>
    (assert (Diagnosis (id ?id) (diagnosis 1) (realClass ?class)))
    (retract ?f))
