@@ -68,20 +68,21 @@ do
    (Patient (id ?id)(thal ?th)(vessels_flourosopy ?vf)(chest_pain_type ?chp)(sex ?sex)(class ?class))
    (and (test (<> ?th 7))
         (test (and (<> ?vf 0) (<> ?vf 3))))
-   (and (test (<> ?chp 4))
+   (and (test (< ?chp 3)) ; MODIFIED
         (test (= ?sex 1)))
    =>
    (assert (Diagnosis (id ?id) (diagnosis 1) (realClass ?class)))
    (printout t "1" crlf))
 
 
+; MODIFIED
 ; thal!=7 και vessels_flourosopy !=3 !=0 and sex!=0 and chest_pain =4 then 2
 (defrule r3
    (declare (salience 80))
    (Patient (id ?id)(thal ?th)(vessels_flourosopy ?vf)(chest_pain_type ?chp)(sex ?sex)(class ?class))
    (and (test (<> ?th 7))
         (test (and (<> ?vf 0) (<> ?vf 3))))
-   (and (test (= ?chp 4))
+   (and (test (>= ?chp 3)) ; MODIFIED
         (test (= ?sex 1)))
    =>
    (assert (Diagnosis (id ?id) (diagnosis 2) (realClass ?class)))
