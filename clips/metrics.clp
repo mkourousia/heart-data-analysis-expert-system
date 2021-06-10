@@ -32,12 +32,24 @@
 (defrule results 
    (declare (salience -1))
    =>
+   (bind ?Accuracy (/ (+ ?*TP* ?*TN*) (+ (+ ?*TP* ?*FP*) (+ ?*FN* ?*TN*) )))
+
    (bind ?Precision (/ ?*TP* (+ ?*TP* ?*FP*)))
+
+   (bind ?Sensitivity (/ ?*TP* (+ ?*TP* ?*FN*)))
+   
+   (bind ?Specificity (/ ?*TN* (+ ?*TN* ?*FP*)))
+   
    (bind ?Recall (/ ?*TP* (+ ?*TP* ?*FN*)))
+   
    (bind ?F_Measure (/ (* 2 (* ?Precision ?Recall) ) (+ ?Precision ?Recall)))
-   (printout t "Precision: " ?Precision crlf)
-   (printout t "Recall: " ?Recall crlf)
-   (printout t "F-Measure: " ?F_Measure crlf)
+   
+   (printout t "Accuracy: " ?Accuracy crlf crlf)
+   (printout t "Sensitivity: " ?Sensitivity crlf crlf)
+   (printout t "Specificity: " ?Specificity crlf crlf)
+   (printout t "Precision: " ?Precision crlf crlf)
+   (printout t "Recall: " ?Recall crlf crlf)
+   (printout t "F-Measure: " ?F_Measure crlf crlf)
 )
 
 

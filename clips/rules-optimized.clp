@@ -61,6 +61,7 @@ do
    (printout t "2" crlf))
 
 
+; MODIFIED
 ; thal!=7 και vessels_flourosopy !=3 !=0 and sex=1 and chest_pain !=4 then 1
 (defrule r2
    (declare (salience 80))
